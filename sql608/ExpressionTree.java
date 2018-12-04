@@ -1,13 +1,16 @@
 package sql608;
 
+import sql608.helper.Two;
 import storageManager.Tuple;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
+// expression tree is for condition check under WHERE clause
 public class ExpressionTree {
+    // each operator corresponds to Two operands
     private Stack<String> operator;
-    // operand contains operator
     private Stack<ExpressionTreeNode> operand;
     private ExpressionTreeNode root;
     private String condition;
@@ -24,16 +27,18 @@ public class ExpressionTree {
         this.root = constructTree(whereCondition);
     }
 
+    // TODO consider the parenthesis in the condition
     public ExpressionTreeNode constructTree(String whereCondition) {
         if (whereCondition == null || whereCondition.length() == 0) return null;
         String[] words = splitWords(whereCondition);
         for (String word : words) {
+            // any if succeed, continue to next word
             if (isOperator(word)) {
                 processOperator(word);
             } else if (word.equals("(")) {
-                processLeftParentheses(word);
+                processLeftParentheses();
             } else if (word.equals(")")) {
-                processRightParentheses(word);
+                processRightParentheses();
             } else {
                 processOperand(word);
             }
@@ -45,14 +50,8 @@ public class ExpressionTree {
         return root;
     }
 
-    private void processOperator(String str) {
-        int precedence = getPrecedence(str);
-        while ((!operator.isEmpty()) && precedence <= getPrecedence(operator.peek())) {
-            expandTree();
-        }
-        operator.push(str);
-    }
-
+    // pop out Two operand
+    // form a binary node with corresponding operator
     private void expandTree() {
         String op = operator.pop();
         ExpressionTreeNode right = operand.pop();
@@ -61,19 +60,31 @@ public class ExpressionTree {
         operand.push(tmp);
     }
 
-    private void processLeftParentheses(String str) {
-        operator.push("(");
-    }
-
-    private void processRightParentheses(String str) {
-        while (!operator.empty() && !operator.peek().equals("(")) {
+    private void processOperator(String str) {
+        int precedence = getPrecedence(str);
+        // if higher priority operator is in stack
+        // pop out to form a tree first
+        while ((!operator.isEmpty()) &&
+                precedence <= getPrecedence(operator.peek())) {
             expandTree();
         }
-        operator.pop();
+        operator.push(str);
     }
 
     private void processOperand(String str) {
         operand.push(new ExpressionTreeNode(str));
+    }
+
+    private void processLeftParentheses() {
+        operator.push("(");
+    }
+
+    private void processRightParentheses() {
+        while (!operator.empty() &&
+               !operator.peek().equals("(")) {
+            expandTree();
+        }
+        operator.pop();
     }
 
     private int getPrecedence(String operator) {
@@ -87,13 +98,14 @@ public class ExpressionTree {
             return 1;
         } else if (operator.equals("|")) {
             return -1;
-        } else {
+        } else {  // () and &
             return 0;
         }
     }
 
     public static boolean checkCondition(Tuple tuple, ExpressionTreeNode treeNode) {
-        // string argument is not null and is equal, ignoring case, to the string "true".
+        // string argument is not null and is equal, ignoring case, to the string "true"
+        // then return True
         return Boolean.parseBoolean(evaluate(tuple, treeNode));
     }
 
@@ -154,17 +166,33 @@ public class ExpressionTree {
         }
     }
 
+    public static Two<ArrayList<ExpressionTreeNode>, ArrayList<String>> getSubExpression(ExpressionTree expressionTree) {
+        if (expressionTree.getRoot() == null || expressionTree.getRoot() == null) {
+            return new Two<>(null, null);
+        }
+
+        ArrayList<ExpressionTreeNode> nodes = new ArrayList<ExpressionTreeNode>();
+        ArrayList<String> strings = new ArrayList<>();
+        if(!"&".contains(expressionTree.getRoot().getValue())) {
+            nodes.add(expressionTree.getRoot());
+            strings.add(expressionTree.condition);
+        } else {
+            // if first operand is AND
+            ExpressionTree leftExpressionTree = new ExpressionTree(expressionTree.getRoot().getLeft());
+            nodes.addAll(getSubExpression(leftExpressionTree).first);
+            strings.addAll(getSubExpression(leftExpressionTree).second);
+            ExpressionTree rightExpressionTree = new ExpressionTree(expressionTree.getRoot().getRight());
+            nodes.addAll(getSubExpression(rightExpressionTree).first);
+            strings.addAll(getSubExpression(rightExpressionTree).second);
+        }
+        return new Two<>(nodes, strings);
+    }
+
     public ExpressionTree(ExpressionTreeNode expressionTreeNode) {
         operand = new Stack<>();
         operator = new Stack<>();
         this.relationName = "";
         this.root = expressionTreeNode;
-    }
-
-    public ExpressionTree() {
-        operand = new Stack<>();
-        operator = new Stack<>();
-        this.root = new ExpressionTreeNode();
     }
 
     private String[] splitWords(String str) {
@@ -184,10 +212,7 @@ public class ExpressionTree {
 
     private boolean isOperator(String str) {
         final String[] operators = new String[] { "-", "/", "=", ">", "<", "+", "*", "&", "|" };
-        if (Arrays.asList(operators).contains(str)) {
-            return true;
-        }
-        return false;
+        return Arrays.asList(operators).contains(str);
     }
 
     public static boolean isInteger(String str) {
@@ -195,7 +220,7 @@ public class ExpressionTree {
     }
 
     private static String getTupleField(Tuple tuple, String field) {
-        // TODO why relationName will contain ?
+        // TODO why relationName will contain naturalJoin?
         if (relationName != "" && !relationName.contains("naturalJoin")
             && !relationName.contains("CrossJoin") && field.contains(".")) {
             field = field.split("\\.")[1];

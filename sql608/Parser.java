@@ -1,7 +1,7 @@
 package sql608;
 
-import sql608.helper.three;
-import sql608.helper.two;
+import sql608.helper.Three;
+import sql608.helper.Two;
 import storageManager.Field;
 import storageManager.FieldType;
 import storageManager.Relation;
@@ -43,7 +43,7 @@ public class Parser {
         System.out.println(sb.toString());
     }
 
-    public three<String, ArrayList<String>, ArrayList<FieldType>> parseCreate(String sql) {
+    public Three<String, ArrayList<String>, ArrayList<FieldType>> parseCreate(String sql) {
         sql = sql.trim().toLowerCase();
 
         // create table name (...)
@@ -66,7 +66,7 @@ public class Parser {
             fieldNameList.add(records[0]);
             fieldTypeList.add(type);
         }
-        return new three<>(name, fieldNameList, fieldTypeList);
+        return new Three<>(name, fieldNameList, fieldTypeList);
     }
 
     public String parseDrop(String sql) {
@@ -80,14 +80,14 @@ public class Parser {
         return tableName;
     }
 
-    public three<String, ArrayList<String>, ArrayList<Field>> parseInsertOneTuple(String sql, Relation relation) {
+    public Three<String, ArrayList<String>, ArrayList<Field>> parseInsertOneTuple(String sql, Relation relation) {
         // INSERT INTO course (sid, homework, project, exam, grade) VALUES (1, 99, 100, 100, "A")
         sql = myLowercase(sql.trim());
         if (!sql.contains("value")) { return null; }
         String[] splitResult = sql.replaceAll("\\\"", "").split("[\\s]+", 4);
         String tableName = splitResult[2];
         if (relation == null) {
-            return new three<>(tableName, null, null);
+            return new Three<>(tableName, null, null);
         }
 
         // find ()
@@ -125,22 +125,24 @@ public class Parser {
             values.add(field);
             i++;
         }
-        return new three<>(tableName, fieldNames, values);
+        return new Three<>(tableName, fieldNames, values);
     }
 
-    public two<String, ParserTree> parseInsertForSelect(String sql) {
+    public Two<String, ParserContainer> parseInsertForSelect(String sql) {
         sql = sql.trim().toLowerCase();
         String[] splitResult = sql.split("[\\s]+", 4);
         String tableName = splitResult[2];
         String selectCondition = splitResult[3];
-        ParserTree parserTree = parseSelect(selectCondition);
-        return new two<String, ParserTree>(tableName, parserTree);
+        ParserContainer parserContainer = parseSelect(selectCondition);
+        return new Two<String, ParserContainer>(tableName, parserContainer);
     }
 
-    public ParserTree parseSelect(String sql) {
+    public ParserContainer parseSelect(String sql) {
         sql = sql.trim().toLowerCase();
         if (!sql.contains("from")) { return null; }
+        // "A" to A
         sql = sql.replaceAll("[\\s]+", " ").replaceAll("\\\"", "");
+        sql = sql.replaceAll("\\[", "(").replaceAll("]", ")");
 
         String[] splitResult = sql.split("select|from|where|order by");
         // replace literal , and split by whitespace
@@ -174,8 +176,8 @@ public class Parser {
         }
     }
 
-    private ParserTree parseSelectBase(String[] attributes, boolean isDistinct, String condition) {
-        ParserTree tree = new ParserTree("select");
+    private ParserContainer parseSelectBase(String[] attributes, boolean isDistinct, String condition) {
+        ParserContainer tree = new ParserContainer("select");
         tree.setDistinct(isDistinct);
         tree.setFrom(true);
         tree.setAttributes(new ArrayList<>(Arrays.asList(attributes)));
@@ -198,39 +200,38 @@ public class Parser {
         return tree;
     }
 
-    private ParserTree parseSelectSingleTable(String[] attributes, boolean isDistinct, String table, String condition) {
+    private ParserContainer parseSelectSingleTable(String[] attributes, boolean isDistinct, String table, String condition) {
         printArr("Attributes: ", attributes);
-        ParserTree tree = parseSelectBase(attributes, isDistinct, condition);
+        ParserContainer tree = parseSelectBase(attributes, isDistinct, condition);
         tree.setTable(table);
         return tree;
     }
 
-    private ParserTree parseSelectMulTables(String[] attributes, boolean isDistinct, String[] tables,
-                                            String condition) {
+    private ParserContainer parseSelectMulTables(String[] attributes, boolean isDistinct, String[] tables,
+                                                 String condition) {
         printArr("Attributes: ", attributes);
         printArr("Table names: ", tables);
-        ParserTree tree = parseSelectBase(attributes, isDistinct, condition);
+        ParserContainer tree = parseSelectBase(attributes, isDistinct, condition);
         tree.setTables(new ArrayList<>(Arrays.asList(tables)));
         return tree;
     }
 
-    public ParserTree parseDelete(String stmt) {
-        stmt = myLowercase(stmt.trim());
-        stmt = stmt.replaceAll("\\\"", "");
-        ParserTree parserTree = new ParserTree("delete");
-        parserTree.setFrom(true);
-        if (stmt.contains("where")) {
-            parserTree.setWhere(true);
-            String splitResult[] = stmt.split("from|where");
-            parserTree.setTable(splitResult[1].trim());
-            parserTree.setWhereCondition(splitResult[2].trim());
+    public ParserContainer parseDelete(String sql) {
+        sql = myLowercase(sql.trim());
+        sql = sql.replaceAll("\\\"", "");
+        ParserContainer parserContainer = new ParserContainer("delete");
+        parserContainer.setFrom(true);
+        if (sql.contains("where")) {
+            parserContainer.setWhere(true);
+            String splitResult[] = sql.split("from|where");
+            parserContainer.setTable(splitResult[1].trim());
+            parserContainer.setWhereCondition(splitResult[2].trim());
         } else {
-            parserTree.setWhere(false);
-            String splitResult[] = stmt.split("from");
-            parserTree.setTable(splitResult[1].trim());
+            parserContainer.setWhere(false);
+            String splitResult[] = sql.split("from");
+            parserContainer.setTable(splitResult[1].trim());
         }
-        return parserTree;
+        return parserContainer;
     }
-
 
 }

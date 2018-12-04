@@ -1,6 +1,7 @@
 package sql608;
 
 public class ExpressionTreeNode {
+    // value can be operator and operands
     private String value;
     private ExpressionTreeNode left, right;
 
@@ -40,6 +41,15 @@ public class ExpressionTreeNode {
 
     public String getValue() {
         return value;
+    }
+
+    public String getString(ExpressionTreeNode root) {
+        if (root == null) return " ";
+        String left = getString(root.left);
+        String cur = root.value;
+        String right = getString(root.right);
+        // left: " course.id "  cur: "="  right: " course2.id "
+        return left + cur + right;
     }
 
 }

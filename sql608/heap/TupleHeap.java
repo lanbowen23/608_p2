@@ -1,4 +1,4 @@
-package sql608.helper;
+package sql608.heap;
 
 import storageManager.Tuple;
 
@@ -6,32 +6,29 @@ import java.util.Comparator;
 
 // definition for heap which returns Tuple
 public class TupleHeap implements Heap<Tuple> {
-    private MyHeapImpl myHeap;
+    private HeapImpl heapImpl;
     private int count;
 
     public TupleHeap(Comparator<Tuple> comparator) {
         count = 0;
-        this.myHeap = new MyHeapImpl(10000, comparator);
+        this.heapImpl = new HeapImpl(10000, comparator);
     }
 
     @Override
-    //cannot handle duplicate tuple
-    // push in
     public void offer(Tuple tuple) {
         HeapNode<Tuple> heapNode = new HeapNode<>(count++, tuple);
-        myHeap.offer(heapNode);
+        heapImpl.offer(heapNode);
     }
 
     @Override
-    // pull out
     public Tuple poll() {
-        HeapNode heapNode = myHeap.poll();
+        HeapNode heapNode = heapImpl.poll();
         return (Tuple) heapNode.data;
     }
 
     @Override
     public boolean isEmpty() {
-        return myHeap.isEmpty();
+        return heapImpl.isEmpty();
     }
 
 }

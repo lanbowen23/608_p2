@@ -1,15 +1,15 @@
-package sql608.helper;
+package sql608.heap;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class MyHeapImpl {
+public class HeapImpl {
     private int lastIndex;
     private int[] posArray;
     private HeapNode[] dataArray;
     private Comparator comparator;
 
-    public MyHeapImpl(int size, Comparator comparator) {
+    public HeapImpl(int size, Comparator comparator) {
         lastIndex = 0;
         posArray = new int[size];
         Arrays.fill(posArray, -1);
@@ -24,11 +24,19 @@ public class MyHeapImpl {
 
     public boolean compareData (HeapNode node1, HeapNode node2, int mode) {
         switch(mode) {
+            // fail the comparison
             case -1: return comparator.compare(node1.data, node2.data) < 0;
             // satisfy the comparator we want
             case 1: return comparator.compare(node1.data, node2.data) >= 0;
         }
         return false;
+    }
+
+    public void offer(HeapNode node) {
+        dataArray[lastIndex] = node;
+        posArray[node.id] = lastIndex;
+        moveUp(lastIndex);
+        lastIndex++;
     }
 
     public HeapNode poll() {
@@ -38,11 +46,12 @@ public class MyHeapImpl {
         return ans;
     }
 
-    public void offer(HeapNode node) {
-        dataArray[lastIndex] = node;
-        posArray[node.id] = lastIndex;
-        moveUp(lastIndex);
-        lastIndex++;
+    private void moveUp(int pos) {
+        if (pos == 0 || compareData(dataArray[pos], dataArray[(pos-1)/2],1)) {
+            return;
+        }
+        swap(pos, (pos-1) / 2);
+        moveUp((pos-1) / 2);
     }
 
     public void delete(HeapNode node) {
@@ -66,14 +75,6 @@ public class MyHeapImpl {
         }
     }
 
-    private void moveUp(int pos) {
-        if (pos == 0 || compareData(dataArray[pos], dataArray[(pos-1)/2],1)) {
-            return;
-        }
-        swap(pos, (pos-1) / 2);
-        moveUp((pos-1) / 2);
-    }
-
     private void moveDown(int pos) {
         int maxChildPos;
         if (2 * pos + 1 >= lastIndex) return;
@@ -88,7 +89,6 @@ public class MyHeapImpl {
         moveDown(maxChildPos);
     }
 
-    // need to update pos
     private void swap(int pos1, int pos2) {
         HeapNode tmp = dataArray[pos1];
         dataArray[pos1] = dataArray[pos2];
@@ -97,23 +97,5 @@ public class MyHeapImpl {
         posArray[dataArray[pos2].id] = pos2;
     }
 
-    public static void main(String[] args) {
-        MyHeapImpl test = new MyHeapImpl(100, new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                return -((Integer) o1).compareTo((Integer) o2);
-            }
-        });
-        for (int i = 0; i < 5; i++) {
-            test.offer(new HeapNode<Integer>(i,i+1));
-        }
-        test.offer(new HeapNode<Integer>(5,9));
-        System.out.println(test.poll().data);
-        System.out.println(test.poll().data);
-        test.offer(new HeapNode<Integer>(5,9));
-        System.out.println(test.poll().data);
-        while (!test.isEmpty()) {
-            System.out.println(test.poll().data);
-        }
-    }
+
 }

@@ -2,28 +2,22 @@ package sql608;
 
 import java.util.ArrayList;
 
-public class ParserTree {
+// store useful flags and string snippet for parsed results
+public class ParserContainer {
     private String keyword;
+    // flags for has such parts or not
     private boolean distinct;
     private boolean where;
     private boolean from;
     private boolean order;
-    private boolean join;
+    // parse to formal strings
     private String whereCondition;
     private String table;
     private String orderAttribute;
     private ArrayList<String> tables;
     private ArrayList<String> attributes;
 
-    public ParserTree(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
+    public ParserContainer(String keyword) {
         this.keyword = keyword;
     }
 
@@ -49,14 +43,6 @@ public class ParserTree {
 
     public void setOrder(boolean order) {
         this.order = order;
-    }
-
-    public boolean isJoin() {
-        return join;
-    }
-
-    public void setJoin(boolean join) {
-        this.join = join;
     }
 
     public String getWhereCondition() {

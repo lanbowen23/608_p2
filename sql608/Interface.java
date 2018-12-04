@@ -3,14 +3,14 @@ package sql608;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class Interface {
-    public void start(){
+class Interface {
+    void start(){
         try {
             System.out.println();
             System.out.println("TinySQL:");
-            System.out.println("To execute file, please enter: source absolute_path_to_file");
+            System.out.println("To execute file, please enter: file absolute_path_to_file");
             System.out.println();
-            System.out.println("Please enter your TinySQL command:");
+            System.out.println("Or enter your TinySQL command:");
             Physical pQ = new Physical();
 
             InputStreamReader inputStreamReader = new InputStreamReader(System.in);

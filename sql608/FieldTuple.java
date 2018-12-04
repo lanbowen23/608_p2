@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 // transform string field names list to
 // real corresponding tuple values list
-public class CustomedTuple {
+public class FieldTuple {
     private ArrayList<Field> fields;
     private ArrayList<String> selectedFieldNames;
 
-    public CustomedTuple(Tuple tuple, ArrayList<String> selectedFieldNamesList) {
+    public FieldTuple(Tuple tuple, ArrayList<String> selectedFieldNamesList) {
         fields = new ArrayList<>();
         selectedFieldNames = selectedFieldNamesList;
         for (String fieldName : selectedFieldNamesList) {

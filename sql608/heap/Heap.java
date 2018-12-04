@@ -1,6 +1,6 @@
-package sql608.helper;
+package sql608.heap;
 
-// for Heap storing different type of data structure
+// heap storing different type of data structure
 // need to implement several necessary operations
 public interface Heap<T> {
 

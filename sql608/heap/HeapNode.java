@@ -1,7 +1,7 @@
-package sql608.helper;
+package sql608.heap;
 
 public class HeapNode<T> {
-    // unique id for each elements in the heap
+    // increasing count for each elements in the heap
     public int id;
     public T data;
 

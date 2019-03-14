@@ -24,7 +24,7 @@ public class Disk implements Serializable {
     //Properties are defined based on the Megatron 747 disk sold in 2001.
     
     //One block holds 16384 bytes (although a block only holds 8 fields in here)
-    //Thus, a relation of 60 tuples/blocks occupies as much as 960K
+    //Thus, a relation of 60 twoTuples/blocks occupies as much as 960K
     //If memory has 1/6 of the relation size, then the memory has only 160K space
     //However, we want to simulate the speed of a 300M relation and a 50M memory
     //So we increase the transfer time of a block by 320 folds
@@ -56,12 +56,12 @@ public class Disk implements Serializable {
     int j=track.size();
     if (block_index>j) {
       if (j>0) {
-    	// first fill the last block with invalid tuples
+    	// tableName fill the last block with invalid twoTuples
         while (!track.get(j-1).isFull()) { 
           track.get(j-1).appendTuple(new Tuple(t));
         }
       }
-      // fill the gap with invalid tuples
+      // fill the gap with invalid twoTuples
       for (int i=j;i<block_index-1;i++) {
         track.add(new Block());
         while (!track.get(i).isFull()) {

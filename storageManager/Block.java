@@ -4,23 +4,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-/* A disk or memory block contains a number of records/tuples that 
+/* A disk or memory block contains a number of records/twoTuples that
  * belong to the same relation. 
  * A tuple CANNOT be splitted and stored in more than one blocks. 
  * Each block is defined to hold as most FIELDS_PER_BLOCK fields. 
- * Therefore, the max number of tuples held in a block can be 
+ * Therefore, the max number of twoTuples held in a block can be
  *   calculated from the size of a tuple, 
  *   which is the number of fields in a tuple.
  * You can get the number by calling Schema::getTuplesPerBlock().
  *
- * The max number of tuples held in a block = 
+ * The max number of twoTuples held in a block =
  *       FIELDS_PER_BLOCK / num_of_fields_in_tuple
  *
  * Usage: Blocks already reside in the memory and disk. 
  *          You don't need to create blocks manually.
  *        Most time when you need to use the Block class is 
  *          to access a block of the main memory
- *        and to get or modify the tuples in the memory block.
+ *        and to get or modify the twoTuples in the memory block.
  *        First be sure to get a pointer to a memory block 
  *          from the Memory class.
  */
@@ -54,7 +54,7 @@ public class Block implements Serializable {
 	    tuples.clear();
 	  }
 	  
-	// returns current number of tuples inside this block
+	// returns current number of twoTuples inside this block
 	  public int getNumTuples()  {
 	    int count=0;
 	    for (ListIterator<Tuple> it=tuples.listIterator();
@@ -81,9 +81,9 @@ public class Block implements Serializable {
 	    return new Tuple(tuples.get(tuple_offset));
 	  }
 	
-	// returns all the tuples inside this block
+	// returns all the twoTuples inside this block
 	  public ArrayList<Tuple> getTuples()  {
-      //return (ArrayList<Tuple>) DeepCopy.copy(tuples);
+      //return (ArrayList<Tuple>) DeepCopy.copy(twoTuples);
       ArrayList<Tuple> tuples=new ArrayList<Tuple>(this.tuples.size());
       ListIterator<Tuple> lit=this.tuples.listIterator();
       while (lit.hasNext()) {
@@ -104,7 +104,7 @@ public class Block implements Serializable {
 	      }
 	      for (int i=0;i<tuples.size();i++) {
 	        if (!s.equals(tuples.get(i).getSchema())) {
-	          System.err.print("setTuple ERROR: tuples' schemas " +
+	          System.err.print("setTuple ERROR: twoTuples' schemas " +
 	          		"do not match" + "\n");
 	          return false;
 	        }
@@ -117,7 +117,7 @@ public class Block implements Serializable {
 	    }
 	    if (tuple_offset >= tuples.size()) {
 	      //If there is a gap before the offset, 
-      	  // filled it with invalid tuples
+      	  // filled it with invalid twoTuples
 	      Tuple t=new Tuple(tuple.schema_manager,tuple.schema_index);
 	      t.invalidate();
 	      for (int i=tuples.size();i<tuple_offset;i++) {
@@ -129,15 +129,15 @@ public class Block implements Serializable {
 	    return true;
 	  }
 	
-	  // remove all the tuples; sets new tuples for the block;
-	  // returns false if number of input tuples exceeds the space limit	  
+	  // remove all the twoTuples; sets new twoTuples for the block;
+	  // returns false if number of input twoTuples exceeds the space limit
 	  public boolean setTuples(ArrayList<Tuple> tuples) {
 	    if (tuples.size()>tuples.get(0).getTuplesPerBlock()) {
-	      System.err.print("setTuples ERROR: number of tuples " +
+	      System.err.print("setTuples ERROR: number of twoTuples " +
 	      		"exceed space limit of the block" + "\n");
 	      return false;
 	    }
-	    //this.tuples=(ArrayList<Tuple>) DeepCopy.copy(tuples);
+	    //this.twoTuples=(ArrayList<Tuple>) DeepCopy.copy(twoTuples);
 	    this.tuples.clear();
 	    ListIterator<Tuple> lit=tuples.listIterator();
 	    while (lit.hasNext())
@@ -145,12 +145,12 @@ public class Block implements Serializable {
 	    return true;
 	  }
 	  
-	  // remove all the tuples; sets new tuples for the block;
-	  // returns false if number of input tuples exceeds the space limit	
+	  // remove all the twoTuples; sets new twoTuples for the block;
+	  // returns false if number of input twoTuples exceeds the space limit
 	  public boolean setTuples(ArrayList<Tuple> tuples, 
 			  					int start_index, int end_index) {
 	    if ((end_index-start_index)>tuples.get(0).getTuplesPerBlock()) {
-	      System.err.print("setTuples ERROR: number of tuples " +
+	      System.err.print("setTuples ERROR: number of twoTuples " +
 	      		"exceed space limit of the block" + "\n");
 	      return false;
 	    }
@@ -162,7 +162,7 @@ public class Block implements Serializable {
 	  }
 	
 	// appends one tuple to the end of the block;
-	//returns false if total number of tuples exceeds the space limit
+	//returns false if total number of twoTuples exceeds the space limit
 	  public boolean appendTuple(Tuple tuple) {
 	    if (isFull()) {
 	      System.err.print("appendTuple ERROR: the block is full"
@@ -184,7 +184,7 @@ public class Block implements Serializable {
 	    return true;
 	  }
 	
-	// empty all the tuples in the block
+	// empty all the twoTuples in the block
 	  public boolean invalidateTuples() { 
 	    for (int i=0;i<tuples.size();i++) {
 	      tuples.get(i).invalidate();

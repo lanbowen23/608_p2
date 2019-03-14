@@ -32,7 +32,7 @@ public class MainMemory implements Serializable {
 	  }
 
     //can be used to copy a memory block to another memory block
-    //returns false if out of bound or tuples do not match the schema	  
+    //returns false if out of bound or twoTuples do not match the twoSchema
 	  public boolean setBlock(int memory_block_index,  Block b) {
 	    if (memory_block_index<0 || 
 	    		memory_block_index>=Config.NUM_OF_BLOCKS_IN_MEMORY) {
@@ -65,10 +65,10 @@ public class MainMemory implements Serializable {
 	    return true;
 	  }	  
 
-    //Gets tuples from consecutive blocks from memory
+    //Gets twoTuples from consecutive blocks from memory
     //   [ memory_block_begin, memory_block_begin+num_blocks-1 ]
-    //NOTE: The output tuples must all belong to the same relation/table.
-    //IMPORTANT NOTE: Only the valid tuples in the blocks are returned
+    //NOTE: The output twoTuples must all belong to the same relation/table.
+    //IMPORTANT NOTE: Only the valid twoTuples in the blocks are returned
 	  public ArrayList<Tuple> getTuples(int memory_block_begin,
 			  							int num_blocks)  { 
 	    if (memory_block_begin<0 || 
@@ -96,11 +96,11 @@ public class MainMemory implements Serializable {
 	    	i++) {
 	      ArrayList<Tuple> tuples2=blocks[i].getTuples();
 	      if (!tuples2.get(0).getSchema().equals(s)) {
-	        System.err.print("getTuples ERROR: schema at memory " +
-	        		"block " + i + " has a different schema" + "\n");
+	        System.err.print("getTuples ERROR: twoSchema at memory " +
+	        		"block " + i + " has a different twoSchema" + "\n");
 	        return new ArrayList<Tuple>();
 	      }
-	      // Only valid tuples are returned
+	      // Only valid twoTuples are returned
 	      for (ListIterator<Tuple> it=tuples2.listIterator();
 	      		it.hasNext();) {
 	        Tuple t=it.next();
@@ -110,10 +110,10 @@ public class MainMemory implements Serializable {
 	    return tuples;
 	  }
 
-    //Writes tuples consecutively starting from memory block 
+    //Writes twoTuples consecutively starting from memory block
 	// memory_block_begin;
     //returns false if out of bound in memory
-    //NOTE: The input tuples must all belong to the same relation/table.
+    //NOTE: The input twoTuples must all belong to the same relation/table.
 	  public boolean setTuples(int memory_block_begin, 
 			  				    ArrayList<Tuple> tuples) {
 	    if (memory_block_begin<0 || 
@@ -127,7 +127,7 @@ public class MainMemory implements Serializable {
 	    int num_additional_blocks=(tuples.size()%tuples_per_block>0?1:0);
 	    if (memory_block_begin + num_blocks + num_additional_blocks >
 	        Config.NUM_OF_BLOCKS_IN_MEMORY) {
-	      System.err.print("setTuples ERROR: number of tuples " +
+	      System.err.print("setTuples ERROR: number of twoTuples " +
 	      		"exceed the memory space" + "\n");
 	      return false;
 	    }

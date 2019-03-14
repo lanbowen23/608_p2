@@ -7,39 +7,40 @@ import storageManager.Tuple;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+read the tuples in the disk relation block by block to a queue
+output the tuple one by one from the queue
+*/
 public class RelationIterator {
     private MainMemory mainMemory;
     private Relation relation;
-    private int memTmpBlockId;
-    private int curBlockId;
+    private int memBlock;
+    private int curDiskId;
     private Queue<Tuple> tupleQueue;
-    private int numBlocks;
+    private int numRelationBlock;
 
-    public RelationIterator(Relation relation, MainMemory mainMemory, int memTmpBlockId) {
+    public RelationIterator(Relation relation, MainMemory mainMemory, int memBlock) {
         this.relation = relation;
         this.mainMemory = mainMemory;
-        this.memTmpBlockId = memTmpBlockId;
-        this.curBlockId = -1;
+        this.memBlock = memBlock;
+        this.curDiskId = -1;  // the reading index of disk block
         this.tupleQueue = new LinkedList<>();
-        this.numBlocks = relation.getNumOfBlocks();
+        this.numRelationBlock = relation.getNumOfBlocks();
     }
 
-    public boolean hasNext() {
-        if (!tupleQueue.isEmpty()) {
-            return true;
-        } else {
+    private boolean hasNext() {
+        if (!tupleQueue.isEmpty()) return true;
+        else {
             while (tupleQueue.isEmpty()) {
-                curBlockId++;
-                if (curBlockId >= numBlocks) {
-                    return false;
-                }
-                mainMemory.getBlock(memTmpBlockId).clear();
-                relation.getBlock(curBlockId, memTmpBlockId);
-                if (!mainMemory.getBlock(memTmpBlockId).isEmpty()) {
-                    for (Tuple tuple : mainMemory.getBlock(memTmpBlockId).getTuples()) {
-                        if (!tuple.isNull()) {
-                            tupleQueue.offer(tuple);
-                        }
+                // read next block in the disk and offer to queue
+                curDiskId++;
+                if (curDiskId >= numRelationBlock) return false;
+                mainMemory.getBlock(memBlock).clear();
+                relation.getBlock(curDiskId, memBlock);  // get the block to the mem
+                if (!mainMemory.getBlock(memBlock).isEmpty()) {
+                    /* send all tuples in the block to the queue */
+                    for (Tuple tuple : mainMemory.getBlock(memBlock).getTuples()) {
+                        if (!tuple.isNull()) tupleQueue.offer(tuple);
                     }
                 }
             }

@@ -3,19 +3,19 @@ package storageManager;
 import java.io.Serializable;
 import java.util.TreeMap;
 
-/* A schema manager maps a relation name to a relation and 
- * 	a corresponding schema. 
- * You will always create a relation through schema manager 
- * by specifying a relation name and a schema.
+/* A twoSchema manager maps a relation name to a relation and
+ * 	a corresponding twoSchema.
+ * You will always create a relation through twoSchema manager
+ * by specifying a relation name and a twoSchema.
  * You will also get access to relations and schemas from here.
  * Usage: At the beginning of your program, you need to initialize a 
- * 			schema manager.
- *        Initialize the schema manager by supplying the references 
+ * 			twoSchema manager.
+ *        Initialize the twoSchema manager by supplying the references
  *        	to memory and to disk
  *        Create a relation through here (and not elsewhere) by giving 
- *        	relation name and schema
+ *        	relation name and twoSchema
  *        Every relation name must be unique.
- *        Once a relation is created, the schema cannot be changed
+ *        Once a relation is created, the twoSchema cannot be changed
  */
 
 public class SchemaManager implements Serializable {
@@ -40,7 +40,7 @@ public class SchemaManager implements Serializable {
 		    relation_name_to_index=new TreeMap<String,Integer>();
 	  }
 
-	//returns empty schema if the relation is not found
+	//returns empty twoSchema if the relation is not found
 	  public Schema getSchema(String relation_name)  {
 	    if (!relation_name_to_index.containsKey(relation_name)) {
 	      System.err.print("getSchema ERROR: relation " + 
@@ -72,7 +72,7 @@ public class SchemaManager implements Serializable {
 	      return null;
 	    }
 	    if (schema.isEmpty()) {
-	      System.err.print("createRelation ERROR: empty schema" 
+	      System.err.print("createRelation ERROR: empty twoSchema"
 	    		  + "\n");
 	      return null;
 	    }

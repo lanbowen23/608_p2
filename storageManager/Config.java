@@ -1,10 +1,10 @@
 package storageManager;
 
 public class Config {
-	// Therefore, a block can hold 1-8 tuples depending on the relation schema.
+	// Therefore, a block can hold 1-8 twoTuples depending on the relation schema.
     public static int FIELDS_PER_BLOCK = 8;     
     public static int MAX_NUM_OF_FIELDS_IN_RELATION = 8;
-    // Starts with small memory to test one-pass and Two-pass algorithms
+    // Starts with small memory to test one-pass and ValueContainer-pass algorithms
     public static int NUM_OF_BLOCKS_IN_MEMORY = 10; 
     
 

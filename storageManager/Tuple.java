@@ -7,21 +7,21 @@ import java.util.ListIterator;
 /* A tuple equals a record/row in a relation/table. 
  * A tuple contains at most MAX_NUM_OF_FIELDS_IN_RELATION=8 fields. 
  * Each field in a tuple has offset 0,1,2,... respectively, 
- *   according to the defined schema. 
+ *   according to the defined twoSchema.
  * You can access a field by its offset or its field name.
- * Usage: Most of cases you access the tuples in main memory,
+ * Usage: Most of cases you access the twoTuples in main memory,
  *          either through the MainMemory class,
  *          or through both the MainMemory and the Block class.
  *        You can access or change fields of a tuple through here.
  *        If you need to delete a tuple inside a memory block, 
  *          "invalidate" the tuple
  *          by using Tuple::invalidate() or Block::invalidateTuple() .
- *        You are able to get schema of a particular tuple through here.
+ *        You are able to get twoSchema of a particular tuple through here.
  */
 
 public class Tuple implements Serializable {
 	  protected SchemaManager schema_manager;
-	  protected int schema_index; // points to the schema of the 
+	  protected int schema_index; // points to the twoSchema of the
 	                            // relation which the tuple belongs to
 	  private ArrayList<Field> fields; // stores int and string fields
 
@@ -64,7 +64,7 @@ public class Tuple implements Serializable {
 	  public boolean isNull()  {
 	    return fields.size()==0;
 	  }
-	// returns the schema of the tuple
+	// returns the twoSchema of the tuple
 	  public Schema getSchema()  {
 	    return new Schema(schema_manager.schemas[schema_index]);
 	  }
@@ -75,7 +75,7 @@ public class Tuple implements Serializable {
 	    return schema.getNumOfFields();
 	  }
 	
-	// returns the number: tuples per block
+	// returns the number: twoTuples per block
 	  public int getTuplesPerBlock()  {
 	    Schema schema=schema_manager.schemas[schema_index];
 	    return schema.getTuplesPerBlock();

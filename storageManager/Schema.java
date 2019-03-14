@@ -7,23 +7,23 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/* A schema specifies what a tuple of a particular relation contains, 
+/* A twoSchema specifies what a tuple of a particular relation contains,
  * including field names, and field types in a defined order. 
  * The field names and types are given offsets according to 
  *   the defined order.
- * Every schema specifies at most total 
+ * Every twoSchema specifies at most total
  *   Config.MAX_NUM_OF_FIELDS_IN_RELATION = 8 fields,
  * The size of a tuple is the total number of fields specified 
- *   in the schema. 
- * The tuple size will affect the number of tuples which can be 
+ *   in the twoSchema.
+ * The tuple size will affect the number of twoTuples which can be
  * held in one disk block or memory block.
- * Usage: Before creating a relation, you have to create a schema 
- *          object first.
- *        Create a schema by giving field names and field types. 
+ * Usage: Before creating a relation, you have to create a twoSchema
+ *          object nodeName.
+ *        Create a twoSchema by giving field names and field types.
  *          (Refer to "Field.h")
  *        Every field name must be unique and non-empty.
  *        Then create a relation through the SchemaManager 
- *          using the created schema.
+ *          using the created twoSchema.
  */
 
 public class Schema implements Serializable {

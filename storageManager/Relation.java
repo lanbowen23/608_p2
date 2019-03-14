@@ -8,9 +8,9 @@ import java.util.ListIterator;
  * 	on a single track of the disk (in clustered way). 
  * The disk blocks on the track are numbered by 0,1,2,... 
  * You have to copy the disk blocks of the relation to memory blocks 
- * 	before accessing the tuples 
+ * 	before accessing the twoTuples
  * inside the blocks.
- * To delete tuples in the disk blocks, you can invalidate the tuples 
+ * To delete twoTuples in the disk blocks, you can invalidate the twoTuples
  * 	and left "holes" in the original places. 
  * 	Be sure to deal with the holes when doing every SQL operation.
  * You can decide whether to remove trailing "holes" in a relation.
@@ -22,19 +22,19 @@ import java.util.ListIterator;
  *        Use the Relation class to copy blocks from the disk 
  *        	to the memory or the other direction.
  *        The Relation class will handle the disk part.
- *        You are able to get schema of a particular relation 
+ *        You are able to get twoSchema of a particular relation
  *        	through here.
  */
 
 public class Relation implements Serializable {
 	  private SchemaManager schema_manager;
 	  private Disk disk;
-	  private int schema_index; // points to the schema of the relation
+	  private int schema_index; // points to the twoSchema of the relation
 	  private MainMemory mem; // a pointer to the main memory
 	  private String relation_name; // name of the relation
 
 	// For internal use only: DO NOT use constructors here. 
-	  // Create a relation through schema manager
+	  // Create a relation through twoSchema manager
 	  protected Relation() {
 		    this.schema_manager=null;
 		    this.schema_index=-1;
@@ -64,7 +64,7 @@ public class Relation implements Serializable {
 	    return relation_name;
 	  }
 
-	  // returns the schema of the tuple
+	  // returns the twoSchema of the tuple
 	  public Schema getSchema()  {
 	    return new Schema(schema_manager.schemas[schema_index]);
 	  }
@@ -76,7 +76,7 @@ public class Relation implements Serializable {
 	    return data.size();
 	  }
 
-	  // returns actual number of tuples in the relation
+	  // returns actual number of Tuples in the relation
 	  //NOTE: Because the operation should not have disk latency,
 	  //      it is implemented in Relation instead of in Disk
 	  public int getNumOfTuples()  {
@@ -92,7 +92,7 @@ public class Relation implements Serializable {
 	    return (schema_manager==null || schema_index==-1 || mem==null);
 	  }
 
-	//creates an empty tuple of the schema
+	//creates an empty tuple of the twoSchema
 	  public Tuple createTuple()  {
 	    return new Tuple(schema_manager,schema_index);
 	  }
@@ -163,14 +163,14 @@ public class Relation implements Serializable {
 	    		  + "\n");
 	      return false;
 	    }
-	    // check if the schema is correct
+	    // check if the twoSchema is correct
 	    ArrayList<Tuple> v = mem.getBlock(memory_block_index).getTuples();
 	    Schema s = schema_manager.schemas[schema_index];
 	    for (int i=0;i<v.size();i++) {
 	      if (!v.get(i).getSchema().equals(s)) {
 	        System.err.print("setBlock ERROR: The tuple at offest " 
 	        		+ i + " of memory block "
-	            + memory_block_index + " has a different schema." + "\n");
+	            + memory_block_index + " has a different twoSchema." + "\n");
 	        return false;
 	      }
 	    }
@@ -216,13 +216,13 @@ public class Relation implements Serializable {
 	    Schema s = schema_manager.schemas[schema_index];
 	    int j,k;
 	    for (j=memory_block_index;j<memory_block_index+num_blocks;j++) {
-	      // check if the schema is correct
+	      // check if the twoSchema is correct
 	      ArrayList<Tuple> v = mem.getBlock(j).getTuples();
 	      for (k=0;k<v.size();k++) {
 	        if (!v.get(k).getSchema().equals(s)) {
 	          System.err.print("setBlocks ERROR: The tuple at offest " 
 	        		  + k + " of memory block "
-	          + j + " has a different schema." + "\n");
+	          + j + " has a different twoSchema." + "\n");
 	          return false;
 	        }
 	      }

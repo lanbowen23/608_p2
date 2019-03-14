@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /* A field can either by an integer or a string
  * the "type" variable indicates the field type
- * Usage: Fields are automatically setup when the schema is specified
+ * Usage: Fields are automatically setup when the twoSchema is specified
  */
 
 public class Field implements Serializable {
